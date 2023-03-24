@@ -51,11 +51,15 @@ fn display_sensor_data() {
     i2c.set_slave_address(I2C_DEV_ADDRESS).unwrap();
     let ir_pin = gpio.get(IR_SENSOR_PIN).unwrap().into_input_pullup();
 
+    let mut inc = 1;
+
     loop {
         let ambient_temp = read_temperature(&mut i2c, AMB_TEMP_REG);
         let object_temp = read_temperature(&mut i2c, OBJ_TEMP_REG);
         let ir_distance = read_prox_sensor(&ir_pin);
 
+        println!("{:?}",inc);
+        inc += 1;
         println!("Ambient temperature: {:.2}C", ambient_temp);
         println!("Object temperature: {:.2}C", object_temp);
         println!("IR Distance: {:.2} cm", ir_distance);

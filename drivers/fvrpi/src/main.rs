@@ -20,20 +20,21 @@ fn main() {
     let gpio = Gpio::new().unwrap();
 
     let ir_pin = gpio.get(17).unwrap().into_input(); // IR sensor pin
-    let temp_pin = gpio.get(18).unwrap().into_input(); // Temperature sensor pin
+//    let temp_pin = gpio.get(18).unwrap().into_input(); // Temperature sensor pin
 
     let ir = Arc::new(Mutex::new(ir_pin));
-    let temp = Arc::new(Mutex::new(temp_pin));
+//    let temp = Arc::new(Mutex::new(temp_pin));
 
     let ir_thread = thread::spawn(move || {
         read_sensor(ir);
     });
 
-    let temp_thread = thread::spawn(move || {
+/*    let temp_thread = thread::spawn(move || {
         read_sensor(temp);
     });
+*/
 
     ir_thread.join().unwrap();
-    temp_thread.join().unwrap();
+//    temp_thread.join().unwrap();
 }
 

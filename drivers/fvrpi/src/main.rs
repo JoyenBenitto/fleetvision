@@ -3,13 +3,13 @@ use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
 
-fn read_sensor(sensor: Arc<Mutex<InputPin>>) {
+fn read_sensor(sensor: Arc<Mutex<InputPin>>, sensor_name: &str) {
     // Function to read sensor data at real-time
     loop {
-        if sensor.lock().unwrap().read() == Level::High {
-            println!("Obstacle detected on sensor {:?}", sensor);
+        if sensor.lock().unwrap().read() == Level::Low {
+            println!("Obstacle detected on sensor {:?}", sensor_name);
         } else {
-            println!("No obstacle detected on sensor {:?}", sensor);
+            println!("No obstacle detected on sensor {:?}", sensor_name);
         }
         thread::sleep(Duration::from_millis(100));
     }
@@ -26,11 +26,11 @@ fn main() {
 //    let temp = Arc::new(Mutex::new(temp_pin));
 
     let ir_thread = thread::spawn(move || {
-        read_sensor(ir);
+        read_sensor(ir, "ir");
     });
 
 /*    let temp_thread = thread::spawn(move || {
-        read_sensor(temp);
+        read_sensor(temp, "temp");
     });
 */
 

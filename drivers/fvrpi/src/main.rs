@@ -19,9 +19,9 @@ fn read_prox_sensor(pin: &InputPin) -> i32 {
     let mut res = 0;
     loop {
         if pin.read() == Level::High {
-            res = 1;
-        } else {
             res = 0;
+        } else {
+            res = 1;
         }
         thread::sleep(Duration::from_millis(100));
         return res;
@@ -47,7 +47,7 @@ fn display_sensor_data() {
         inc += 1;
         println!("Ambient temperature: {:.2}C", ambient_temp);
         println!("Object temperature: {:.2}C", object_temp);
-        println!("IR Distance: {:.2} cm", ir_distance);
+        println!("IR Intrusion: {:.2}", ir_distance);
 
         thread::sleep(Duration::from_millis(500));
     }

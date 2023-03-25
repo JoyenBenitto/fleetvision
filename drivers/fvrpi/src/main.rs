@@ -67,14 +67,15 @@ fn read_temperature(i2c: &mut I2c, register: u8) -> f32 {
 fn main() {
     // Main function to run stuff
 
-    /*let log = OpenOptions::new()
+    let log = OpenOptions::new()
         .truncate(true)
         .read(true)
         .create(true)
         .write(true)
         .open(utils::get_temp_filepath())
         .unwrap();
+
     utils::print_type_of(&log);
-    */
+    //utils::log_sensor_data(log);
     display_sensor_data();
 }

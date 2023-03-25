@@ -14,39 +14,15 @@ const I2C_DEV_ADDRESS: u16 = 0x5A;
 const AMB_TEMP_REG: u8 = 0x06;
 const OBJ_TEMP_REG: u8 = 0x07;
 
-fn read_prox_sensor(pin: &InputPin) -> f32 {
-    // Function to read IR sensor data at real-time
-
-    let mut duration = Duration::from_secs(0);
-    let mut prev_time = std::time::Instant::now();
-    let mut pulse_started = false;
-    let mut pulse_ended = false;
-
-    let mut last_level = Level::High;
-
-    while !pulse_ended {
-        let level = pin.read();
-        if level == Level::Low && last_level == Level::High {
-            pulse_started = true;
-            prev_time = std::time::Instant::now();
-        } else if level == Level::High && last_level == Level::Low {
-            pulse_ended = true;
+fn read_prox_sensor(pin: &InputPin) -> bool {
+    // Function to read IR sensor
+    loop {
+        if pin.lock().unwrap().read() == Level::High {
+            return true;
+        } else {
+            return false;
         }
-
-        let elapsed = std::time::Instant::now().duration_since(prev_time);
-        if pulse_started && elapsed > Duration::from_secs(2) {
-            pulse_ended = true;
-        }
-
-        if !pulse_ended {
-            duration += elapsed;
-        }
-        last_level = level;
-    }
-
-    let duration_micros = duration.as_micros() as f32;
-    let distance_cm = duration_micros / 29.0 / 2.0;
-    distance_cm
+        thread::sleep(Duration::from_millis(100));
 }
 
 fn display_sensor_data() {

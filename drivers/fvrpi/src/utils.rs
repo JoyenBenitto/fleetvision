@@ -12,7 +12,7 @@ pub fn get_temp_filepath() -> String {
 
 pub fn log_sensor_data(sensor_array: [f32; SENSOR_PARAMETERS_NO]) {
     let temp_directory = env::temp_dir();
-    let temp_file = temp_directory.join("file");
+    let temp_file = temp_directory.join("mylog.log");
 
     let mut file = File::create(temp_file).unwrap();
     writeln!(&mut file, "{:?}", sensor_array).unwrap();

@@ -61,11 +61,11 @@ void loop() {
   else  {
     Serial.print("1"); 
   }
-  int k = 1;
+  int k = 0;
   if(k == 1){
-    digitalWrite(7, HIGH)
+    digitalWrite(7, HIGH);
     delay(3000);
-    exit();
+    digitalWrite(7, LOW);
   }
   Serial.println();
   delay(1000);

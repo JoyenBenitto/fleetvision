@@ -7,4 +7,3 @@ edition = "2021"
 
 [dependencies]
 rppal = "0.12.0"
-frunk = "0.4.1"

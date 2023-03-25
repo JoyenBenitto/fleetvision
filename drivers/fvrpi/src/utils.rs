@@ -1,8 +1,9 @@
-use dirs::data_local_dir;
-use gag::Redirect;
+use frunk::{hlist, HCons, HNil};
+use std::env;
 use std::fs::File;
-use std::fs::OpenOptions;
-use std::io::{Read, Seek, SeekFrom, Write};
+use std::io::Write;
+
+const SENSOR_PARAMETERS_NO: usize = 3;
 
 pub fn get_temp_filepath() -> String {
     //Function to return filepath for temp log
@@ -10,15 +11,13 @@ pub fn get_temp_filepath() -> String {
     return "/tmp/mylog.log".into();
 }
 
-pub fn log_sensor_data(log: File) {
-    // Function to log output sensor data
-    let print_redirect = Redirect::stdout(log).unwrap();
-    let mut log = print_redirect.into_inner();
-    let mut buf = String::new();
+pub fn log_sensor_data(sensor_array: [f32; SENSOR_PARAMETERS_NO]) {
+    let temp_directory = env::temp_dir();
+    let temp_file = temp_directory.join("file");
 
-    log.seek(SeekFrom::Start(0)).unwrap();
-    log.read_to_string(&mut buf).unwrap();
-    assert_eq!(&buf[..], "Hidden\n");
+    let mut file = File::create(temp_file).unwrap();
+    writeln!(&mut file, "{:?}", sensor_array).unwrap();
+    file.write(b"Bytes\n").unwrap();
 }
 
 pub fn print_type_of<T>(_: &T) {

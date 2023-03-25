@@ -1,5 +1,4 @@
-use dirs::data_local_dir;
-use gag::Redirect;
+use frunk::{hlist, HCons, HNil};
 use rppal::gpio::{Gpio, InputPin, Level};
 use rppal::i2c::I2c;
 use std::fs::OpenOptions;
@@ -13,15 +12,16 @@ const IR_SENSOR_PIN: u8 = 17;
 const I2C_DEV_ADDRESS: u16 = 0x5A;
 const AMB_TEMP_REG: u8 = 0x06;
 const OBJ_TEMP_REG: u8 = 0x07;
+const SENSOR_PARAMETERS_NO: usize = 3;
 
-fn read_prox_sensor(pin: &InputPin) -> i32 {
+fn read_prox_sensor(pin: &InputPin) -> f32 {
     // Function to read IR sensor
-    let mut res = 0;
+    let mut res = 0.0;
     loop {
         if pin.read() == Level::High {
-            res = 0;
+            res = 0.0;
         } else {
-            res = 1;
+            res = 1.0;
         }
         thread::sleep(Duration::from_millis(100));
         return res;
@@ -37,17 +37,29 @@ fn display_sensor_data() {
     let _ir_pin = gpio.get(IR_SENSOR_PIN).unwrap().into_input_pullup();
 
     let mut inc = 1;
+    let mut sensor_data_arr: [f32; SENSOR_PARAMETERS_NO] = [0.0; 3];
+    let mut sensor_parameters_arr: [f32; SENSOR_PARAMETERS_NO] = [0.0; 3];
+
+    utils::print_type_of(&sensor_data_arr);
 
     loop {
         let ambient_temp = read_temperature(&mut i2c, AMB_TEMP_REG);
         let object_temp = read_temperature(&mut i2c, OBJ_TEMP_REG);
         let ir_distance = read_prox_sensor(&_ir_pin);
 
+        sensor_parameters_arr = [ambient_temp, object_temp, ir_distance];
+
         println!("{:?}", inc);
         inc += 1;
         println!("Ambient temperature: {:.2}C", ambient_temp);
         println!("Object temperature: {:.2}C", object_temp);
         println!("IR Intrusion: {:.2}", ir_distance);
+
+        for x in 0..SENSOR_PARAMETERS_NO {
+            sensor_data_arr[x] = sensor_parameters_arr[x];
+        }
+
+        //utils::log_sensor_data(sensor_data_arr);
 
         thread::sleep(Duration::from_millis(500));
     }

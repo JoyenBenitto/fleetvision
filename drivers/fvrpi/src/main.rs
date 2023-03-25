@@ -1,4 +1,3 @@
-use frunk::{hlist, HCons, HNil};
 use rppal::gpio::{Gpio, InputPin, Level};
 use rppal::i2c::I2c;
 use std::fs::OpenOptions;

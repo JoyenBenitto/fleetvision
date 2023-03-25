@@ -1,4 +1,3 @@
-use frunk::{hlist, HCons, HNil};
 use std::env;
 use std::fs::File;
 use std::io::Write;

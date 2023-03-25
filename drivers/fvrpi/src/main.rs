@@ -14,15 +14,17 @@ const I2C_DEV_ADDRESS: u16 = 0x5A;
 const AMB_TEMP_REG: u8 = 0x06;
 const OBJ_TEMP_REG: u8 = 0x07;
 
-fn read_prox_sensor(pin: &InputPin) -> bool {
+fn read_prox_sensor(pin: &InputPin) -> i32 {
     // Function to read IR sensor
+    let mut res = 0;
     loop {
         if pin.read() == Level::High {
-            return true;
+            res = 1;
         } else {
-            return false;
+            res = 0;
         }
         thread::sleep(Duration::from_millis(100));
+        return res;
     }
 }
 

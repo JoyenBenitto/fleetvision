@@ -17,12 +17,13 @@ const OBJ_TEMP_REG: u8 = 0x07;
 fn read_prox_sensor(pin: &InputPin) -> bool {
     // Function to read IR sensor
     loop {
-        if pin.lock().unwrap().read() == Level::High {
+        if pin.read() == Level::High {
             return true;
         } else {
             return false;
         }
         thread::sleep(Duration::from_millis(100));
+    }
 }
 
 fn display_sensor_data() {

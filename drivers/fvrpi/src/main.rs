@@ -1,7 +1,13 @@
+use dirs::data_local_dir;
+use gag::Redirect;
 use rppal::gpio::{Gpio, InputPin, Level};
 use rppal::i2c::I2c;
+use std::fs::OpenOptions;
+use std::io::{Read, Seek, SeekFrom, Write};
 use std::thread;
 use std::time::Duration;
+
+pub mod utils;
 
 const IR_SENSOR_PIN: u8 = 17;
 const I2C_DEV_ADDRESS: u16 = 0x5A;
@@ -49,16 +55,16 @@ fn display_sensor_data() {
     let mut i2c = I2c::new().unwrap();
 
     i2c.set_slave_address(I2C_DEV_ADDRESS).unwrap();
-    let ir_pin = gpio.get(IR_SENSOR_PIN).unwrap().into_input_pullup();
+    let _ir_pin = gpio.get(IR_SENSOR_PIN).unwrap().into_input_pullup();
 
     let mut inc = 1;
 
     loop {
         let ambient_temp = read_temperature(&mut i2c, AMB_TEMP_REG);
         let object_temp = read_temperature(&mut i2c, OBJ_TEMP_REG);
-        let ir_distance = read_prox_sensor(&ir_pin);
+        let ir_distance = read_prox_sensor(&_ir_pin);
 
-        println!("{:?}",inc);
+        println!("{:?}", inc);
         inc += 1;
         println!("Ambient temperature: {:.2}C", ambient_temp);
         println!("Object temperature: {:.2}C", object_temp);
@@ -80,9 +86,15 @@ fn read_temperature(i2c: &mut I2c, register: u8) -> f32 {
 }
 
 fn main() {
-    // Main function to run sensor mutex op
+    // Main function to run stuff
+
+    let log = OpenOptions::new()
+        .truncate(true)
+        .read(true)
+        .create(true)
+        .write(true)
+        .open(utils::get_temp_filepath())
+        .unwrap();
+    utils::print_type_of(&log);
     display_sensor_data();
 }
-
-
-
